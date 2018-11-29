@@ -16,6 +16,7 @@
 <body>
   <!-- loading Assembly JS here -->
   <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.21.2/assembly.js"></script>
+
   <div class='flex-parent viewport-full relative scroll-hidden'>
     <div class='flex-child w-full w300-ml absolute static-ml left bottom'>
       <div class='flex-parent flex-parent--column viewport-third h-full hmax-full bg-white py18 px12'>
@@ -50,10 +51,9 @@
   <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
   <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
   <script>
-
     var map = L.map('map', {
       zoomSnap: .1,
-      center: [39, -105],
+      center: [39.4, -105],
       zoom: 9,
       minZoom: 8,
       maxZoom: 13,
@@ -70,6 +70,23 @@
       id: 'mapbox.light',
       accessToken: accessToken
     }).addTo(map);
+
+    var dataSource = ["data/distributed-generation.csv", "data/substations.csv"];
+
+    // loop through data sources and add to map
+    for (var i = 0; i < dataSource.length; i++) {
+      // add distributed data to map
+      omnivore.csv(dataSource[i])
+        .on('ready', function(e) {
+          // data is loaded into the layer
+          console.log(e.target)
+        })
+        .on('error', function(e) {
+          // fired if the layer can't be loaded over AJAX or can't be parsed
+          console.log(e.error[0].message);
+        })
+        .addTo(map);
+    }
 
   </script>
 
