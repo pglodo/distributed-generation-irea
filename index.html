@@ -71,22 +71,59 @@
       accessToken: accessToken
     }).addTo(map);
 
+    // paths to the CSV data
     var dataSource = ["data/distributed-generation.csv", "data/substations.csv"];
 
-    // loop through data sources and add to map
+    // create leaflet layers
+    var locationLayer = L.geoJSON(),
+      substationLayer = L.geoJSON();
+
     for (var i = 0; i < dataSource.length; i++) {
-      // add distributed data to map
-      omnivore.csv(dataSource[i])
-        .on('ready', function(e) {
-          // data is loaded into the layer
-          console.log(e.target)
-        })
-        .on('error', function(e) {
-          // fired if the layer can't be loaded over AJAX or can't be parsed
-          console.log(e.error[0].message);
-        })
-        .addTo(map);
+      // if distributed generation locations
+      if (i == 0) {
+        omnivore.csv(dataSource[i])
+          .on('ready', function(e) {
+            // populate leaflet layer with data
+            locationLayer.addData(e.target.toGeoJSON());
+          })
+          .on('error', function(e) {
+            // fired if the layer can't be loaded over AJAX or can't be parsed
+            console.log(e.error[0].message);
+          })
+      } else if (i == 1) {            // if substation locations
+        omnivore.csv(dataSource[i])
+          .on('ready', function(e) {
+            // populate leaflet layer with data
+            substationLayer.addData(e.target.toGeoJSON());
+          })
+          .on('error', function(e) {
+            // fired if the layer can't be loaded over AJAX or can't be parsed
+            console.log(e.error[0].message);
+          })
+      }
     }
+
+
+    function drawMap() {
+
+      var options = {
+        pointToLayer: function(feature, ll) {
+          return L.circleMarker(ll, {
+            opacity: 1,
+            weight: 2,
+            fillOpacity: 0
+          })
+        }
+      }
+
+      locationLayer.setStyle(options);
+      substationLayer.setStyle(options);
+      locationLayer.addTo(map);
+      substationLayer.addTo(map);
+
+    } // end drawMap
+
+    drawMap();
 
   </script>
 
