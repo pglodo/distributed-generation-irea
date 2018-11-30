@@ -74,53 +74,46 @@
     // paths to the CSV data
     var dataSource = ["data/distributed-generation.csv", "data/substations.csv"];
 
-    var locationLayer = L.geoJSON(),
-      substationLayer = L.geoJSON();
+    var locationLayer = omnivore.csv(dataSource[0])
+      .on('ready', function() {
 
-    for (var i = 0; i < dataSource.length; i++) {
-      // if distributed generation locations
-      if (i == 0) {
-        omnivore.csv(dataSource[i])
-          .on('ready', function(e) {
-            // populate leaflet layer with data
-            locationLayer.addData(e.target.toGeoJSON());
-          })
-          .on('error', function(e) {
-            // fired if the layer can't be loaded over AJAX or can't be parsed
-            console.log(e.error[0].message);
-          })
-      } else if (i == 1) { // if substation locations
-        omnivore.csv(dataSource[i])
-          .on('ready', function(e) {
-            // populate leaflet layer with data
-            substationLayer.addData(e.target.toGeoJSON());
-          })
-          .on('error', function(e) {
-            // fired if the layer can't be loaded over AJAX or can't be parsed
-            console.log(e.error[0].message);
-          })
-      }
-    }
+      })
+      .on('error', function(e) {
+        console.log(e.error[0].message);
+      });
+    var substationLayer = omnivore.csv(dataSource[1])
+      .on('ready', function() {
+
+      })
+      .on('error', function(e) {
+        console.log(e.error[0].message);
+      });
 
     drawMap(substationLayer, locationLayer);
 
 
     function drawMap(layer1, layer2) {
 
-      var options = {
-        pointToLayer: function(feature, ll) {
-          return L.circleMarker(ll, {
-            opacity: 1,
-            weight: 2,
-            fillOpacity: 0
-          })
-        }
-      }
+      var markerOptions = {
+        radius: 8,
+        fillColor: '#ff7800',
+        color: '#000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
 
-      layer1.addTo(map);
-      layer2.addTo(map);
-      layer1.setStyle(options);
-      layer2.setStyle(options);
+      layer1.setStyle({
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, markerOptions);
+        }
+      }).addTo(map);
+
+      layer2.setStyle({
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, markerOptions);
+        }
+      }).addTo(map);
 
     } // end drawMap
   </script>
