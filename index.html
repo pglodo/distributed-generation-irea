@@ -74,7 +74,6 @@
     // paths to the CSV data
     var dataSource = ["data/distributed-generation.csv", "data/substations.csv"];
 
-    // create leaflet layers
     var locationLayer = L.geoJSON(),
       substationLayer = L.geoJSON();
 
@@ -90,7 +89,7 @@
             // fired if the layer can't be loaded over AJAX or can't be parsed
             console.log(e.error[0].message);
           })
-      } else if (i == 1) {            // if substation locations
+      } else if (i == 1) { // if substation locations
         omnivore.csv(dataSource[i])
           .on('ready', function(e) {
             // populate leaflet layer with data
@@ -103,28 +102,15 @@
       }
     }
 
+    drawMap(substationLayer, locationLayer);
 
-    function drawMap() {
 
-      var options = {
-        pointToLayer: function(feature, ll) {
-          return L.circleMarker(ll, {
-            opacity: 1,
-            weight: 2,
-            fillOpacity: 0
-          })
-        }
-      }
+    function drawMap(layer1, layer2) {
 
-      locationLayer.setStyle(options);
-      substationLayer.setStyle(options);
-      locationLayer.addTo(map);
-      substationLayer.addTo(map);
+      layer1.addTo(map);
+      layer2.addTo(map);
 
     } // end drawMap
-
-    drawMap();
-
   </script>
 
 
