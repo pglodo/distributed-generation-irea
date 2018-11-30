@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
   <script>
     var map = L.map('map', {
@@ -60,40 +60,33 @@
       maxBounds: L.latLngBounds([37.8, -107.5], [40.9, -102.0])
     });
 
-    // mapbox API access Token
-    var accessToken = 'pk.eyJ1IjoicGdsb2RvIiwiYSI6ImNqbzU1NDFhbjAzbXIzcXB1ZTcxb3AxZzMifQ.2849K8fPe6cLYdIsrQN_8Q'
-
-    // request a mapbox raster tile layer and add to map
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken, {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18,
-      id: 'mapbox.light',
-      accessToken: accessToken
+    // add basemap
+    var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
-    // paths to the CSV data
-    var dataSource = ["data/distributed-generation.csv", "data/substations.csv"];
-
-    var locationLayer = omnivore.csv(dataSource[0])
-      .on('ready', function() {
-
+    // AJAX requests for the json data
+    // load distributed generation data
+    $.getJSON("data/distributed_generation.json", function(distGen) {
+      // once complete, load substation data
+      $.getJSON("data/substations.json", function(substation) {
+        // use data to draw the map
+        drawMap(distGen, substation);
       })
-      .on('error', function(e) {
-        console.log(e.error[0].message);
+      .fail(function() {
+        console.log("Substation data failed to load.");
       });
-    var substationLayer = omnivore.csv(dataSource[1])
-      .on('ready', function() {
+    })
+    .fail(function() {
+      console.log("Distributed generation data failed to load.");
+    });
 
-      })
-      .on('error', function(e) {
-        console.log(e.error[0].message);
-      });
-
-    drawMap(substationLayer, locationLayer);
-
-
+    // Draw the map
     function drawMap(layer1, layer2) {
 
+      // starter options
       var markerOptions = {
         radius: 8,
         fillColor: '#ff7800',
@@ -103,15 +96,17 @@
         fillOpacity: 0.8
       };
 
-      layer1.setStyle({
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, markerOptions);
+      // add distributed generation as a layer
+      var distGenLayer = L.geoJSON(layer1, {
+        pointToLayer: function(feature, latlng) {
+          return L.circleMarker(latlng, markerOptions)
         }
       }).addTo(map);
 
-      layer2.setStyle({
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, markerOptions);
+      // add substations as a layer 
+      var substationLayer = L.geoJSON(layer2, {
+        pointToLayer: function(feature, latlng) {
+          return L.circleMarker(latlng, markerOptions)
         }
       }).addTo(map);
 
