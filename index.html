@@ -107,8 +107,20 @@
 
     function drawMap(layer1, layer2) {
 
+      var options = {
+        pointToLayer: function(feature, ll) {
+          return L.circleMarker(ll, {
+            opacity: 1,
+            weight: 2,
+            fillOpacity: 0
+          })
+        }
+      }
+
       layer1.addTo(map);
       layer2.addTo(map);
+      layer1.setStyle(options);
+      layer2.setStyle(options);
 
     } // end drawMap
   </script>
