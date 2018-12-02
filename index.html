@@ -73,7 +73,7 @@
       // once complete, load substation data
       $.getJSON("data/substations.json", function(substation) {
         // use data to draw the map
-        drawMap(distGen, substation);
+        processData(distGen, substation);
       })
       .fail(function() {
         console.log("Substation data failed to load.");
@@ -83,13 +83,74 @@
       console.log("Distributed generation data failed to load.");
     });
 
+    // calculating radius of location points
+    function locationRadius(val) {
+
+      var radius = Math.sqrt(val / Math.PI);
+      return radius * 1.7; // adjust the scale
+
+    }
+
+    // calculating radius of substation points
+    function substationRadius(val) {
+
+      var radius = Math.sqrt(val / Math.PI);
+      return radius * 0.8;
+
+    }
+
+    function processData(locationData, substationData) {
+
+      // loop through each substation record
+      for (var i = 0; i < substationData.features.length; i++) {
+
+        var props = substationData.features[i].properties;
+        var locationArray = [0];
+
+        // loop through each location record
+        for (var j = 0; j < locationData.features.length; j++) {
+
+          if (props.FACILITYID === locationData.features[j].properties.SUB) {
+
+            locationArray.push(Number(locationData.features[j].properties.DISTGENSIZ));
+          }
+
+        } // end of location loop
+
+        // calculate sum of array
+        var sum = 0;
+
+        for (k = 0; k < locationArray.length; k ++) {
+          sum += locationArray[i];
+        }
+
+        props.total = sum;
+        console.log(props.FACILITYID);
+        console.log(locationArray);
+
+      } // end of substation loop
+
+      drawMap(locationData, substationData);
+
+    } // end of substationTotal()
+
+
     // Draw the map
     function drawMap(layer1, layer2) {
 
       // starter options
-      var markerOptions = {
-        radius: 8,
+      var locationOptions = {
+        radius: 4,
         fillColor: '#ff7800',
+        color: '#000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
+
+      var substationOptions = {
+        radius: 8,
+        fillColor: '#4790F9',
         color: '#000',
         weight: 1,
         opacity: 1,
@@ -99,18 +160,34 @@
       // add distributed generation as a layer
       var distGenLayer = L.geoJSON(layer1, {
         pointToLayer: function(feature, latlng) {
-          return L.circleMarker(latlng, markerOptions)
+          return L.circleMarker(latlng, locationOptions)
         }
       }).addTo(map);
 
-      // add substations as a layer 
+      // add substations as a layer
       var substationLayer = L.geoJSON(layer2, {
         pointToLayer: function(feature, latlng) {
-          return L.circleMarker(latlng, markerOptions)
+          return L.circleMarker(latlng, substationOptions)
         }
       }).addTo(map);
 
+      resizeCircles(distGenLayer, substationLayer);
+
     } // end drawMap
+
+    function resizeCircles(distGenLayer, substationLayer) {
+
+      distGenLayer.eachLayer(function (layer) {
+        var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
+        layer.setRadius(radius);
+      });
+      substationLayer.eachLayer(function (layer) {
+        var radius = substationRadius(Number(layer.feature.properties.total));
+        layer.setRadius(radius);
+      });
+
+    } // end resizeCircles
+    
   </script>
 
 
