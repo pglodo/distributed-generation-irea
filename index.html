@@ -116,7 +116,7 @@
         // loop through each location record
         for (var j = 0; j < locationData.features.length; j++) {
 
-          if (props.FACILITYID === locationData.features[j].properties.SUB) {
+          if (Number(props.FACILITYID) === Number(locationData.features[j].properties.SUB)) {
 
             locationArray.push(Number(locationData.features[j].properties.DISTGENSIZ));
           }
@@ -130,7 +130,7 @@
           sum += locationArray[i];
         }
 
-        props.total = sum;
+        props.total = Number(sum);
         console.log(props.FACILITYID);
         console.log(locationArray);
 
@@ -201,11 +201,12 @@
 
       });
 
-      retrieveInfo(substationLayer);
+      retrieveInfo(substationLayer, distGenLayer);
+      // zoomSub(substationLayer, distGenLayer);
 
     } // end resizeCircles()
 
-    function retrieveInfo(substationLayer) {
+    function retrieveInfo(substationLayer, distGenLayer) {
       // select the element and reference with variable
       // and hide it from view initially
       var info = $('#info').hide();
@@ -228,6 +229,19 @@
           fillOpacity: .6
         });
 
+        distGenLayer.eachLayer(function(layer1) {
+          if (layer1.feature.properties.SUB === props.FACILITYID) {
+            layer1.setStyle({
+              fillOpacity: .8
+            })
+          } else {
+            layer1.setStyle({
+              fillOpacity: 0,
+              opacity: 0
+            })
+          }
+        })
+
       });
 
       substationLayer.on('mouseout', function(e) {
@@ -237,8 +251,18 @@
         e.layer.setStyle({
           fillOpacity: 0.8
         });
+
+        distGenLayer.eachLayer(function(layer1) {
+          layer1.setStyle({
+            fillOpacity: .8,
+            opacity: 1
+          })
+        })
+
       });
-    }
+    } // end retrieveInfo()
+
+
   </script>
 
 
