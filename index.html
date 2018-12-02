@@ -175,6 +175,7 @@
 
     } // end drawMap
 
+    // RESIZING CIRCLES
     function resizeCircles(distGenLayer, substationLayer) {
 
       distGenLayer.eachLayer(function (layer) {
@@ -182,12 +183,20 @@
         layer.setRadius(radius);
       });
       substationLayer.eachLayer(function (layer) {
-        var radius = substationRadius(Number(layer.feature.properties.total));
-        layer.setRadius(radius);
+        if (Number(layer.feature.properties.total > 0)) {
+          var radius = substationRadius(Number(layer.feature.properties.total));
+          layer.setRadius(radius);
+        } else {
+          layer.setStyle({
+            fillColor: '#DFDFDF',
+            radius: 3
+          });
+        }
+
       });
 
     } // end resizeCircles
-    
+
   </script>
 
 
