@@ -229,6 +229,7 @@
           fillOpacity: .6
         });
 
+        // apply filter for only this substation's locations 
         distGenLayer.eachLayer(function(layer1) {
           if (layer1.feature.properties.SUB === props.FACILITYID) {
             layer1.setStyle({
@@ -252,6 +253,7 @@
           fillOpacity: 0.8
         });
 
+        // restore locations
         distGenLayer.eachLayer(function(layer1) {
           layer1.setStyle({
             fillOpacity: .8,
