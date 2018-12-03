@@ -294,17 +294,24 @@
     // label the max and median value
     $(".legend-large-sub-label").html(maxSubValue.toLocaleString());
     $(".legend-small-sub-label").html((maxSubValue / 2).toLocaleString());
+    $(".legend-sub-title").html("Substations");
+
+    // adjust position of title
+    $(".legend-sub-title").css({
+      'top': 36,
+      'left': 20,
+    });
 
     // adjust the postion of the large based on size of circle
     $(".legend-large-sub-label").css({
-      'top': 30,
-      'left': subLargeDiameter + 25,
+      'top': 56,
+      'left': subLargeDiameter + 20,
     });
 
     // adjust the position of the small based on size of circle
     $(".legend-small-sub-label").css({
-      'top': 55,
-      'left': subLargeDiameter + 25,
+      'top': 86,
+      'left': subLargeDiameter + 20,
     });
 
     // select the location circles container and set the height
@@ -326,6 +333,29 @@
       'height': locSmallDiameter.toFixed(),
       'top': (locLargeDiameter - locSmallDiameter) -2,
       'left': (locSmallDiameter / 2) -1
+    });
+
+    // label the max and median value, and title
+    $(".legend-large-loc-label").html(maxLocValue.toLocaleString());
+    $(".legend-small-loc-label").html((maxLocValue / 2).toLocaleString());
+    $(".legend-loc-title").html("Locations");
+
+    // adjust the position of the title
+    $(".legend-loc-title").css({
+      'top': 36,
+      'right': 35
+    });
+
+    // adjust the postion of the large based on size of circle
+    $(".legend-large-loc-label").css({
+      'top': 66,
+      'right': locLargeDiameter + 18,
+    });
+
+    // adjust the position of the small based on size of circle
+    $(".legend-small-loc-label").css({
+      'top': 90,
+      'right': locLargeDiameter + 8,
     });
 
   } // end drawLegend()
