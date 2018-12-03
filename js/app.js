@@ -36,7 +36,7 @@
   function locationRadius(val) {
 
     var radius = Math.sqrt(val / Math.PI);
-    return radius * 1.7; // adjust the scale
+    return radius * 1.5; // adjust the scale
 
   } // end of locationRadius()
 
@@ -91,16 +91,16 @@
     var locationOptions = {
       radius: 4,
       fillColor: '#ff7800',
-      color: '#000',
-      weight: 1,
-      opacity: 1,
+      color: '#ff7800',
+      weight: 0.5,
+      opacity: 0,
       fillOpacity: 0.8
     };
 
     var substationOptions = {
       radius: 8,
       fillColor: '#4790F9',
-      color: '#000',
+      color: '#4790F9',
       weight: 1,
       opacity: 1,
       fillOpacity: 0.8
@@ -142,6 +142,7 @@
       } else {  // else if the substation has no distributed generation locations
         layer.setStyle({
           fillColor: '#DFDFDF',
+          color: '#DFDFDF',
           radius: 3
         });
       }
@@ -157,7 +158,6 @@
     // and hide it from view initially
     var info = $('#info').hide();
 
-    // since boysLayer is on top, use to detect mouseover events
     substationLayer.on('mouseover', function(e) {
 
       // remove the none class to display and show
@@ -172,7 +172,7 @@
 
       // raise opacity level as visual affordance
       e.layer.setStyle({
-        fillOpacity: .6
+        fillOpacity: .4
       });
 
       // apply filter for only this substation's locations
@@ -248,7 +248,7 @@
     });
 
     // round the highest number and use as large circle diameter
-    var maxLocValue = Math.round(sortedLocValues[0] / 1000) * 1000;
+    var maxLocValue = Math.round((sortedLocValues[0] / 1000) * 1000);
 
     // calculate diameters
     var locLargeDiameter = locationRadius(maxLocValue) * 2,
@@ -273,6 +273,60 @@
     // calculate diameters
     var subLargeDiameter = substationRadius(maxSubValue) * 2,
       subSmallDiameter = subLargeDiameter / 2;
+
+    // select the sub circles container and set the height
+    $(".legend-sub-circles").css('height', subLargeDiameter.toFixed());
+
+    // set width and height for large sub circle
+    $(".legend-large-sub").css({
+      'width': subLargeDiameter.toFixed(),
+      'height': subLargeDiameter.toFixed()
+    });
+
+    // set width and height for small sub circle and position
+    $(".legend-small-sub").css({
+      'width': subSmallDiameter.toFixed(),
+      'height': subSmallDiameter.toFixed(),
+      'top': (subLargeDiameter - subSmallDiameter) -2,
+      'left': (subSmallDiameter / 2) -1
+    });
+
+    // label the max and median value
+    $(".legend-large-sub-label").html(maxSubValue.toLocaleString());
+    $(".legend-small-sub-label").html((maxSubValue / 2).toLocaleString());
+
+    // adjust the postion of the large based on size of circle
+    $(".legend-large-sub-label").css({
+      'top': 30,
+      'left': subLargeDiameter + 25,
+    });
+
+    // adjust the position of the small based on size of circle
+    $(".legend-small-sub-label").css({
+      'top': 55,
+      'left': subLargeDiameter + 25,
+    });
+
+    // select the location circles container and set the height
+    $(".legend-loc-circles").css({
+      'height': locLargeDiameter.toFixed(),
+      'padding-top': 15,
+      'padding-left': 30
+    });
+
+    // set width and height for large loc circle
+    $(".legend-large-loc").css({
+      'width': locLargeDiameter.toFixed(),
+      'height': locLargeDiameter.toFixed()
+    });
+
+    // set width and height for small loc circle and position
+    $(".legend-small-loc").css({
+      'width': locSmallDiameter.toFixed(),
+      'height': locSmallDiameter.toFixed(),
+      'top': (locLargeDiameter - locSmallDiameter) -2,
+      'left': (locSmallDiameter / 2) -1
+    });
 
   } // end drawLegend()
 
