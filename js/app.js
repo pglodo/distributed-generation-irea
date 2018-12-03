@@ -79,6 +79,7 @@
     } // end of substation loop
 
     drawMap(locationData, substationData);
+    drawLegend(locationData, substationData);
 
   } // end of processData()
 
@@ -144,7 +145,6 @@
     });
 
     retrieveInfo(substationLayer, distGenLayer);
-    // zoomSub(substationLayer, distGenLayer);
 
   } // end resizeCircles()
 
@@ -204,6 +204,53 @@
       })
 
     });
+
+    // $(document).mousemove(function(e) {
+    //   // first offset from the mouse position of the info window
+    //   info.css({
+    //     "left": e.pageX + 6,
+    //     "top": e.pageY - info.height() - 25
+    //   });
+    //
+    //   // if it crashes into the top, flip it lower right
+    //   if (info.offset().top < 4) {
+    //     info.css({
+    //       "top": e.pageY + 15
+    //     });
+    //   }
+    //   // if it crashes into the right, flip it to the left
+    //   if (info.offset().left + info.width() >= $(document).width() - 40) {
+    //     info.css({
+    //       "left": e.pageX - info.width() - 80
+    //     });
+    //   }
+    // });
+
   } // end retrieveInfo()
+
+  function drawLegend(locationData, substationData) {
+    // create leaflet control for the legend
+    var legendControl = L.control({
+      position: 'bottomright'
+    });
+
+    // when the control is added to the map
+    legendControl.onAdd = function(map) {
+
+      // select the legend using id attribute of legend
+      var legend = L.DomUtil.get("legend");
+
+      // disable scroll and click functionality
+      L.DomEvent.disableScrollPropagation(legend);
+      L.DomEvent.disableClickPropagation(legend);
+
+      // return the selection
+      return legend;
+
+    }
+
+    legendControl.addTo(map);
+
+  } // end drawLegend()
 
 })(); // end app.js

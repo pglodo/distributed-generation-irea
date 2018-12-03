@@ -9,6 +9,11 @@
   <link href='https://api.mapbox.com/mapbox-assembly/v0.21.2/assembly.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
   <style>
+
+    #info {
+      z-index: 700;
+    }
+
   </style>
 </head>
 
@@ -21,10 +26,12 @@
       <div class='flex-parent flex-parent--column viewport-third h-full hmax-full bg-white py18 px12'>
         <div class='flex-child flex-child--grow px12 py12 scroll-auto'>
           <h1 class='txt-h1 mb6'>Title here</h1>
-          <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Aenean lacinia bibendum nulla sed consectetur.
+          <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Aenean lacinia bibendum nulla
+            sed consectetur.
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
           <h2 class='txt-xl mt18 mb12'>subheading</h2>
-          <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Aenean lacinia bibendum nulla sed consectetur.
+          <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Aenean lacinia bibendum nulla
+            sed consectetur.
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
         </div>
         <footer class='px12 py12 bg-gray-faint txt-s'>
@@ -39,19 +46,33 @@
         </footer>
       </div>
     </div>
+
     <div class='flex-child flex-child--grow viewport-twothirds viewport-full-ml'>
       <div id="map" class='viewport-twothirds viewport-full-ml'></div>
-
-    </div>
-    <div id='info' class='py6 px12 bg-white border border--gray-light round absolute w240'>
-      <p class="subName">Substation:
-        <span></span>
-      </p>
-      <p class="subTotal">Total distributed generation:
-        <span></span>
-      </p>
     </div>
   </div>
+
+
+  <div id='legend' class='bg-white round-ml px18 py12 wmax240'>
+    <h3 class='txt-bold mb12 w-full mx-auto'>Generation Size (kW)</h3>
+    <div class='legend-circles relative w180'>
+      <div class="legend-large border border--gray-light absolute"></div>
+      <div class="legend-small border border--gray-light absolute"></div>
+      <div class="legend-large-label txt-m absolute"></div>
+      <div class="legend-small-label txt-m absolute"></div>
+    </div>
+  </div>
+
+  <div id='info' class='py6 px12 bg-white border border--gray-light round absolute top right w240'>
+    <p class="subName">Substation:
+      <span></span>
+    </p>
+    <p class="subTotal">Total distributed generation:
+      <span></span>
+    </p>
+  </div>
+
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
