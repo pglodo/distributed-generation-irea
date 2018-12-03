@@ -251,6 +251,26 @@
 
     legendControl.addTo(map);
 
+    // loop through all location features
+    var locationValues = locationData.features.map(function (location) {
+      // for each
+      for (var kw in location.properties) {
+        return location.properties.DISTGENSIZ;
+      }
+
+    });
+    console.log(locationValues);
+
+    // loop through all substation features
+    var substationValues = substationData.features.map(function (substation) {
+      // for each
+      for (var kw in substation.properties) {
+        return substation.properties.totalGeneration;
+      }
+
+    });
+    console.log(substationValues);
+
   } // end drawLegend()
 
 })(); // end app.js
