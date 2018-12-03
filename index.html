@@ -127,12 +127,11 @@
         var sum = 0;
 
         for (k = 0; k < locationArray.length; k++) {
-          sum += locationArray[i];
+          sum = sum + Number(locationArray[k]);
         }
 
-        props.total = Number(sum);
-        console.log(props.FACILITYID);
-        console.log(locationArray);
+        // create new attribute to store sum
+        props.totalGeneration = Number(sum);
 
       } // end of substation loop
 
@@ -189,8 +188,8 @@
         layer.setRadius(radius);
       });
       substationLayer.eachLayer(function(layer) {
-        if (Number(layer.feature.properties.total > 0)) {
-          var radius = substationRadius(Number(layer.feature.properties.total));
+        if (Number(layer.feature.properties.totalGeneration > 0)) {
+          var radius = substationRadius(Number(layer.feature.properties.totalGeneration));
           layer.setRadius(radius);
         } else {
           layer.setStyle({
@@ -222,14 +221,14 @@
 
         // populate HTML elements with relevant info
         $('.subName span').html(props.NAME);
-        $(".subTotal span").html(props.total.toLocaleString());
+        $(".subTotal span").html(props.totalGeneration.toLocaleString());
 
         // raise opacity level as visual affordance
         e.layer.setStyle({
           fillOpacity: .6
         });
 
-        // apply filter for only this substation's locations 
+        // apply filter for only this substation's locations
         distGenLayer.eachLayer(function(layer1) {
           if (layer1.feature.properties.SUB === props.FACILITYID) {
             layer1.setStyle({
