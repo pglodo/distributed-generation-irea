@@ -127,15 +127,19 @@
   // RESIZING CIRCLES
   function resizeCircles(distGenLayer, substationLayer) {
 
+    // distributed generation location layer
     distGenLayer.eachLayer(function(layer) {
       var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
       layer.setRadius(radius);
     });
+
+    // substation layer
     substationLayer.eachLayer(function(layer) {
+      // if the substation has distributed generation locations
       if (Number(layer.feature.properties.totalGeneration > 0)) {
         var radius = substationRadius(Number(layer.feature.properties.totalGeneration));
         layer.setRadius(radius);
-      } else {
+      } else {  // else if the substation has no distributed generation locations
         layer.setStyle({
           fillColor: '#DFDFDF',
           radius: 3
@@ -205,27 +209,6 @@
 
     });
 
-    // $(document).mousemove(function(e) {
-    //   // first offset from the mouse position of the info window
-    //   info.css({
-    //     "left": e.pageX + 6,
-    //     "top": e.pageY - info.height() - 25
-    //   });
-    //
-    //   // if it crashes into the top, flip it lower right
-    //   if (info.offset().top < 4) {
-    //     info.css({
-    //       "top": e.pageY + 15
-    //     });
-    //   }
-    //   // if it crashes into the right, flip it to the left
-    //   if (info.offset().left + info.width() >= $(document).width() - 40) {
-    //     info.css({
-    //       "left": e.pageX - info.width() - 80
-    //     });
-    //   }
-    // });
-
   } // end retrieveInfo()
 
   function drawLegend(locationData, substationData) {
@@ -257,9 +240,19 @@
       for (var kw in location.properties) {
         return location.properties.DISTGENSIZ;
       }
-
     });
-    console.log(locationValues);
+
+    // sort the array
+    var sortedLocValues = locationValues.sort(function(a, b) {
+      return b - a;
+    });
+
+    // round the highest number and use as large circle diameter
+    var maxLocValue = Math.round(sortedLocValues[0] / 1000) * 1000;
+
+    // calculate diameters
+    var locLargeDiameter = locationRadius(maxLocValue) * 2,
+      locSmallDiameter = locLargeDiameter / 2;
 
     // loop through all substation features
     var substationValues = substationData.features.map(function (substation) {
@@ -267,9 +260,19 @@
       for (var kw in substation.properties) {
         return substation.properties.totalGeneration;
       }
-
     });
-    console.log(substationValues);
+
+    // sort the array
+    var sortedSubValues = substationValues.sort(function(a, b) {
+      return b - a;
+    });
+
+    // round the highest number and use as large circle diameter
+    var maxSubValue = Math.round(sortedSubValues[0] / 1000) * 1000;
+
+    // calculate diameters
+    var subLargeDiameter = substationRadius(maxSubValue) * 2,
+      subSmallDiameter = subLargeDiameter / 2;
 
   } // end drawLegend()
 
