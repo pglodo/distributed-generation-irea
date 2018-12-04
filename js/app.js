@@ -146,7 +146,24 @@
       }
     }).addTo(map);
 
+    // array to pass leaflet layers
     var distGenArray = [bmLayer, solarLayer, windLayer];
+
+    // layers for leaflet layer control
+    var layersObject = {
+      "<b style='color: #5cb572'>Bio Mass</b>": bmLayer,
+      "<b style='color: #ff7800'>Solar</b>": solarLayer,
+      "<b style='color: #b383c4'>Wind</b>": windLayer,
+    };
+
+    L.control.layers(null, layersObject, {
+      collapsed: false
+    }).addTo(map);
+
+    // bring substations to front
+    map.on("overlayadd", function(event) {
+      substationLayer.bringToFront();
+    });
 
     styleLayers(distGenArray, substationLayer);
 
