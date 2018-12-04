@@ -10,9 +10,11 @@
   });
 
   // easy to find colors
-  var subPrimColor = '#4790F9',
+  var subPrimColor = '#4790F9', //'#b383c4'
     subSecondColor = '#DFDFDF',
-    locSolarColor = '#ff7800';
+    locSolarColor = '#ff7800',
+    locBmColor = '#5cb572',
+    locWindColor = '#b383c4';
 
   // add basemap
   var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -92,16 +94,6 @@
   // Draw the map
   function drawMap(layer1, layer2) {
 
-    // starter options
-    var locationOptions = {
-      radius: 4,
-      fillColor: locSolarColor,
-      color: locSolarColor,
-      weight: 0.5,
-      opacity: 0,
-      fillOpacity: 0.8
-    };
-
     var substationOptions = {
       radius: 8,
       fillColor: subPrimColor,
@@ -111,54 +103,114 @@
       fillOpacity: 0.8
     };
 
-    // add biomass generation as a layer
-    var distGenLayer = L.geoJSON(layer1, {
+    // add biomass generation locations as layer
+    var bmLayer = L.geoJSON(layer1, {
       pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng, locationOptions)
+        return L.circleMarker(latlng);
+      },
+      filter: function(feature) {
+        if(feature.properties.DISTGENTYP==="BioMass") {
+          return feature;
+        }
+      }
+    }).addTo(map);
+
+    // add solar generation locations as layer
+    var solarLayer = L.geoJSON(layer1, {
+      pointToLayer: function(feature, latlng) {
+        return L.circleMarker(latlng);
+      },
+      filter: function(feature) {
+        if(feature.properties.DISTGENTYP==="Solar" || feature.properties.DISTGENTYP==="Dual-S_W") {
+          return feature;
+        }
+      }
+    }).addTo(map);
+
+    // add wind generation locations as layer
+    var windLayer = L.geoJSON(layer1, {
+      pointToLayer: function(feature, latlng) {
+        return L.circleMarker(latlng);
+      },
+      filter: function(feature) {
+        if(feature.properties.DISTGENTYP==="Wind") {
+          return feature;
+        }
       }
     }).addTo(map);
 
     // add substations as a layer
     var substationLayer = L.geoJSON(layer2, {
       pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng, substationOptions)
+        return L.circleMarker(latlng)
       }
     }).addTo(map);
 
-    resizeCircles(distGenLayer, substationLayer);
+    var distGenArray = [bmLayer, solarLayer, windLayer];
+
+    styleLayers(distGenArray, substationLayer);
 
   } // end drawMap
 
-  // RESIZING CIRCLES
-  function resizeCircles(distGenLayer, substationLayer) {
+  // STYLE THE LAYERS
+  function styleLayers(distGenArray, substationLayer) {
 
     // distributed generation locations layer
-    distGenLayer.eachLayer(function(layer) {
-        var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
-        layer.setRadius(radius);
-    });
+    for (var i = 0; i < distGenArray.length; i++) {
+      distGenArray[i].eachLayer(function(layer) {
+          var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
+          var theColor = getColor(layer.feature.properties.DISTGENTYP);
+          layer.setStyle({
+            radius: radius,
+            fillColor: theColor,
+            color: theColor,
+            weight: 0.5,
+            opacity: 0,
+            fillOpacity: 0.8
+          });
+      });
+    }
+
+    // determine type to give specific color
+    function getColor(type) {
+      if (type === "Solar" || type === "Dual-S_W") {
+        return locSolarColor;
+      } else if (type === "BioMass") {
+        return locBmColor;
+      } else if (type === "Wind") {
+        return locWindColor;
+      }
+    } // end getColor()
 
     // substation layer
     substationLayer.eachLayer(function(layer) {
       // if the substation has distributed generation locations
       if (Number(layer.feature.properties.totalGeneration > 0)) {
         var radius = substationRadius(Number(layer.feature.properties.totalGeneration));
-        layer.setRadius(radius);
+        layer.setStyle({
+          radius: radius,
+          fillColor: subPrimColor,
+          color: subPrimColor,
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        });
       } else {  // else if the substation has no distributed generation locations
         layer.setStyle({
           fillColor: '#DFDFDF',
           color: '#DFDFDF',
+          weight: 0.5,
           radius: 3
         });
       }
 
     });
 
-    retrieveInfo(substationLayer, distGenLayer);
+    retrieveInfo(substationLayer, distGenArray);
 
-  } // end resizeCircles()
+  } // end styleLayers()
 
-  function retrieveInfo(substationLayer, distGenLayer) {
+  function retrieveInfo(substationLayer, distGenArray) {
     // select the element and reference with variable
     // and hide it from view initially
     var info = $('#info').hide();
@@ -195,18 +247,20 @@
       });
 
       // apply filter for only this substation's locations
-      distGenLayer.eachLayer(function(layer1) {
-          if (layer1.feature.properties.SUB === props.FACILITYID) {
-            layer1.setStyle({
-              fillOpacity: .8
-            })
-          } else {
-            layer1.setStyle({
-              fillOpacity: 0,
-              opacity: 0
-            })
-          }
-      })
+      for (var i = 0; i < distGenArray.length; i++) {
+        distGenArray[i].eachLayer(function(layer1) {
+            if (layer1.feature.properties.SUB === props.FACILITYID) {
+              layer1.setStyle({
+                fillOpacity: .8
+              })
+            } else {
+              layer1.setStyle({
+                fillOpacity: 0,
+                opacity: 0
+              })
+            }
+        })
+      }
 
     });
 
@@ -219,12 +273,14 @@
       });
 
       // restore locations
-      distGenLayer.eachLayer(function(layer1) {
-        layer1.setStyle({
-          fillOpacity: .8,
-          opacity: 1
+      for (var i = 0; i < distGenArray.length; i++) {
+        distGenArray[i].eachLayer(function(layer1) {
+          layer1.setStyle({
+            fillOpacity: .8,
+            opacity: 1
+          })
         })
-      })
+      }
 
     });
 
