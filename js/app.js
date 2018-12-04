@@ -125,30 +125,9 @@
       }
     }).addTo(map);
 
-    addFilter(layer1);
     resizeCircles(distGenLayer, substationLayer);
 
   } // end drawMap
-
-  // ADDING FILTER
-  function addFilter(distGenLayer) {
-    // array to hold select options
-    var uniqueTypes = ["All Types"];
-
-    distGenLayer.features.map(function (location) {
-      // for each
-      for (var type in location.properties) {
-        if (!uniqueTypes.includes(location.properties.DISTGENTYP)) {
-          uniqueTypes.push(location.properties.DISTGENTYP)
-        }
-      }
-    });
-
-    // sort types alphabetically
-    uniqueTypes.sort();
-
-    console.log(uniqueTypes);
-  }
 
   // RESIZING CIRCLES
   function resizeCircles(distGenLayer, substationLayer) {
