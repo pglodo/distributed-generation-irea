@@ -9,6 +9,11 @@
     maxBounds: L.latLngBounds([37.8, -107.5], [40.9, -102.0])
   });
 
+  // easy to find colors
+  var subPrimColor = '#4790F9',
+    subSecondColor = '#DFDFDF',
+    locSolarColor = '#ff7800';
+
   // add basemap
   var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -90,8 +95,8 @@
     // starter options
     var locationOptions = {
       radius: 4,
-      fillColor: '#ff7800',
-      color: '#ff7800',
+      fillColor: locSolarColor,
+      color: locSolarColor,
       weight: 0.5,
       opacity: 0,
       fillOpacity: 0.8
@@ -99,14 +104,14 @@
 
     var substationOptions = {
       radius: 8,
-      fillColor: '#4790F9',
-      color: '#4790F9',
+      fillColor: subPrimColor,
+      color: subPrimColor,
       weight: 1,
       opacity: 1,
       fillOpacity: 0.8
     };
 
-    // add distributed generation as a layer
+    // add biomass generation as a layer
     var distGenLayer = L.geoJSON(layer1, {
       pointToLayer: function(feature, latlng) {
         return L.circleMarker(latlng, locationOptions)
@@ -120,17 +125,38 @@
       }
     }).addTo(map);
 
+    addFilter(layer1);
     resizeCircles(distGenLayer, substationLayer);
 
   } // end drawMap
 
+  // ADDING FILTER
+  function addFilter(distGenLayer) {
+    // array to hold select options
+    var uniqueTypes = ["All Types"];
+
+    distGenLayer.features.map(function (location) {
+      // for each
+      for (var type in location.properties) {
+        if (!uniqueTypes.includes(location.properties.DISTGENTYP)) {
+          uniqueTypes.push(location.properties.DISTGENTYP)
+        }
+      }
+    });
+
+    // sort types alphabetically
+    uniqueTypes.sort();
+
+    console.log(uniqueTypes);
+  }
+
   // RESIZING CIRCLES
   function resizeCircles(distGenLayer, substationLayer) {
 
-    // distributed generation location layer
+    // distributed generation locations layer
     distGenLayer.eachLayer(function(layer) {
-      var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
-      layer.setRadius(radius);
+        var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
+        layer.setRadius(radius);
     });
 
     // substation layer
@@ -167,8 +193,22 @@
       var props = e.layer.feature.properties;
 
       // populate HTML elements with relevant info
-      $('.subName span').html(props.NAME);
-      $(".subTotal span").html(props.totalGeneration.toLocaleString());
+      $('.subName').css({
+        'color': subPrimColor,
+        'font-weight': 'bold'
+      });
+      $('.subTotal').css({
+        'color': locSolarColor,
+        'font-weight': 'bold'
+      });
+      $('.subName span').html(props.NAME).css({
+        'color': 'black',
+        'font-weight': 'normal'
+      });
+      $(".subTotal span").html(props.totalGeneration.toLocaleString() + " kW").css({
+        'color': 'black',
+        'font-weight': 'normal'
+      });
 
       // raise opacity level as visual affordance
       e.layer.setStyle({
@@ -177,16 +217,16 @@
 
       // apply filter for only this substation's locations
       distGenLayer.eachLayer(function(layer1) {
-        if (layer1.feature.properties.SUB === props.FACILITYID) {
-          layer1.setStyle({
-            fillOpacity: .8
-          })
-        } else {
-          layer1.setStyle({
-            fillOpacity: 0,
-            opacity: 0
-          })
-        }
+          if (layer1.feature.properties.SUB === props.FACILITYID) {
+            layer1.setStyle({
+              fillOpacity: .8
+            })
+          } else {
+            layer1.setStyle({
+              fillOpacity: 0,
+              opacity: 0
+            })
+          }
       })
 
     });
@@ -280,7 +320,9 @@
     // set width and height for large sub circle
     $(".legend-large-sub").css({
       'width': subLargeDiameter.toFixed(),
-      'height': subLargeDiameter.toFixed()
+      'height': subLargeDiameter.toFixed(),
+      'color': subPrimColor,
+      'border-width': 2
     });
 
     // set width and height for small sub circle and position
@@ -288,7 +330,9 @@
       'width': subSmallDiameter.toFixed(),
       'height': subSmallDiameter.toFixed(),
       'top': (subLargeDiameter - subSmallDiameter) -2,
-      'left': (subSmallDiameter / 2) -1
+      'left': (subSmallDiameter / 2) - 2,
+      'border-color': subPrimColor,
+      'border-width': 2
     });
 
     // label the max and median value
@@ -324,15 +368,19 @@
     // set width and height for large loc circle
     $(".legend-large-loc").css({
       'width': locLargeDiameter.toFixed(),
-      'height': locLargeDiameter.toFixed()
+      'height': locLargeDiameter.toFixed(),
+      'border-color': locSolarColor,
+      'border-width': 2
     });
 
     // set width and height for small loc circle and position
     $(".legend-small-loc").css({
       'width': locSmallDiameter.toFixed(),
       'height': locSmallDiameter.toFixed(),
-      'top': (locLargeDiameter - locSmallDiameter) -2,
-      'left': (locSmallDiameter / 2) -1
+      'top': (locLargeDiameter - locSmallDiameter) -3,
+      'left': (locSmallDiameter / 2) -2,
+      'border-color': locSolarColor,
+      'border-width': 2
     });
 
     // label the max and median value, and title
