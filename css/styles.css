@@ -1,0 +1,22 @@
+#info {
+  z-index: 700;
+}
+
+.legend-radius {
+  border-radius: 50%;
+}
+
+.legend-label {
+  font-size: 12px;
+}
+
+.filter {
+  position: absolute;
+  right: 48px;
+  width: 260px;
+  font-size: 1.3em;
+}
+
+.flex-child h1, .flex-child h2 {
+  color: #5067af;
+}
