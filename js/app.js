@@ -10,7 +10,7 @@
   });
 
   // easy to find colors
-  var subPrimColor = '#4790F9', //'#b383c4'
+  var subPrimColor = '#5067af', //'#b383c4'
     subSecondColor = '#DFDFDF',
     locSolarColor = '#ff7800',
     locBmColor = '#5cb572',
