@@ -11,13 +11,12 @@
 
   // easy to find colors
   var subPrimColor = '#5067af', //'#b383c4'
-    subSecondColor = '#DFDFDF',
     locSolarColor = '#ff7800',
     locBmColor = '#5cb572',
     locWindColor = '#b383c4';
 
   // add basemap
-  var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
     maxZoom: 19
@@ -89,23 +88,26 @@
   // Draw the map
   function drawMap(layer1, layer2) {
 
-    var substationOptions = {
-      radius: 8,
-      fillColor: subPrimColor,
-      color: subPrimColor,
-      weight: 1,
-      opacity: 1,
+    var commonOptions = {
+      weight: 0.5,
+      stroke: false,
       fillOpacity: 0.8
-    };
+    }
 
     // add biomass generation locations as layer
     var bmLayer = L.geoJSON(layer1, {
       pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng);
+        return L.circleMarker(latlng, commonOptions);
       },
       filter: function(feature) {
         if(feature.properties.DISTGENTYP==="BioMass") {
           return feature;
+        }
+      },
+      style: function(feature) {
+        return {
+          radius: locationRadius(+feature.properties.DISTGENSIZ),
+          color: locBmColor
         }
       }
     }).addTo(map);
@@ -113,11 +115,17 @@
     // add solar generation locations as layer
     var solarLayer = L.geoJSON(layer1, {
       pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng);
+        return L.circleMarker(latlng, commonOptions);
       },
       filter: function(feature) {
         if(feature.properties.DISTGENTYP==="Solar" || feature.properties.DISTGENTYP==="Dual-S_W") {
           return feature;
+        }
+      },
+      style: function(feature) {
+        return {
+          radius: locationRadius(+feature.properties.DISTGENSIZ),
+          color: locSolarColor
         }
       }
     }).addTo(map);
@@ -125,19 +133,40 @@
     // add wind generation locations as layer
     var windLayer = L.geoJSON(layer1, {
       pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng);
+        return L.circleMarker(latlng, commonOptions);
       },
       filter: function(feature) {
         if(feature.properties.DISTGENTYP==="Wind") {
           return feature;
         }
+      },
+      style: function(feature) {
+        return {
+          radius: locationRadius(feature.properties.DISTGENSIZ),
+          color: locWindColor
+        }
       }
     }).addTo(map);
 
+    function colorSub(val) {
+
+      if(val > 0) {
+        return subPrimColor;
+      } else {
+        return '#DFDFDF'
+      }
+    }
+  
     // add substations as a layer
     var substationLayer = L.geoJSON(layer2, {
       pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng)
+        return L.circleMarker(latlng, {
+          radius: substationRadius(+feature.properties.totalGeneration),
+          color: colorSub(+feature.properties.totalGeneration),
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        })
       }
     }).addTo(map);
 
@@ -160,67 +189,10 @@
       substationLayer.bringToFront();
     });
 
-    styleLayers(distGenArray, substationLayer);
-
-  } // end drawMap
-
-  // STYLE THE LAYERS
-  function styleLayers(distGenArray, substationLayer) {
-
-    // distributed generation locations layer
-    for (var i = 0; i < distGenArray.length; i++) {
-      distGenArray[i].eachLayer(function(layer) {
-          var radius = locationRadius(Number(layer.feature.properties.DISTGENSIZ));
-          var theColor = getColor(layer.feature.properties.DISTGENTYP);
-          layer.setStyle({
-            radius: radius,
-            fillColor: theColor,
-            color: theColor,
-            weight: 0.5,
-            opacity: 0,
-            fillOpacity: 0.8
-          });
-      });
-    }
-
-    // determine type to give specific color
-    function getColor(type) {
-      if (type === "Solar" || type === "Dual-S_W") {
-        return locSolarColor;
-      } else if (type === "BioMass") {
-        return locBmColor;
-      } else if (type === "Wind") {
-        return locWindColor;
-      }
-    } // end getColor()
-
-    // substation layer
-    substationLayer.eachLayer(function(layer) {
-      // if the substation has distributed generation locations
-      if (Number(layer.feature.properties.totalGeneration > 0)) {
-        var radius = substationRadius(Number(layer.feature.properties.totalGeneration));
-        layer.setStyle({
-          radius: radius,
-          fillColor: subPrimColor,
-          color: subPrimColor,
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8
-        });
-      } else {  // else if the substation has no distributed generation locations
-        layer.setStyle({
-          fillColor: '#DFDFDF',
-          color: '#DFDFDF',
-          weight: 0.5,
-          radius: 3
-        });
-      }
-
-    });
-
     retrieveInfo(substationLayer, distGenArray);
 
-  } // end styleLayers()
+
+  } // end drawMap
 
   function retrieveInfo(substationLayer, distGenArray) {
     // select the element and reference with variable
