@@ -61,27 +61,22 @@
     for (var i = 0; i < substationData.features.length; i++) {
 
       var props = substationData.features[i].properties;
-      var locationArray = [0];
-
-      // loop through each location record
-      for (var j = 0; j < locationData.features.length; j++) {
-
-        if (Number(props.FACILITYID) === Number(locationData.features[j].properties.SUB)) {
-
-          locationArray.push(Number(locationData.features[j].properties.DISTGENSIZ));
-        }
-
-      } // end of location loop
 
       // calculate sum of array
       var sum = 0;
 
-      for (k = 0; k < locationArray.length; k++) {
-        sum = sum + Number(locationArray[k]);
-      }
+      // loop through each location record
+      for (var j = 0; j < locationData.features.length; j++) {
+
+        if (+props.FACILITYID === +locationData.features[j].properties.SUB) {
+          var num = +locationData.features[j].properties.DISTGENSIZ;
+          sum += num;
+        }
+
+      } // end of location loop
 
       // create new attribute to store sum
-      props.totalGeneration = Number(sum);
+      props.totalGeneration = sum;
 
     } // end of substation loop
 
