@@ -94,24 +94,6 @@
       fillOpacity: 0.8
     }
 
-    // add biomass generation locations as layer
-    var bmLayer = L.geoJSON(layer1, {
-      pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng, commonOptions);
-      },
-      filter: function(feature) {
-        if(feature.properties.DISTGENTYP==="BioMass") {
-          return feature;
-        }
-      },
-      style: function(feature) {
-        return {
-          radius: locationRadius(+feature.properties.DISTGENSIZ),
-          color: locBmColor
-        }
-      }
-    }).addTo(map);
-
     // add solar generation locations as layer
     var solarLayer = L.geoJSON(layer1, {
       pointToLayer: function(feature, latlng) {
@@ -126,6 +108,24 @@
         return {
           radius: locationRadius(+feature.properties.DISTGENSIZ),
           color: locSolarColor
+        }
+      }
+    }).addTo(map);
+
+    // add biomass generation locations as layer
+    var bmLayer = L.geoJSON(layer1, {
+      pointToLayer: function(feature, latlng) {
+        return L.circleMarker(latlng, commonOptions);
+      },
+      filter: function(feature) {
+        if(feature.properties.DISTGENTYP==="BioMass") {
+          return feature;
+        }
+      },
+      style: function(feature) {
+        return {
+          radius: locationRadius(+feature.properties.DISTGENSIZ),
+          color: locBmColor
         }
       }
     }).addTo(map);
@@ -156,7 +156,7 @@
         return '#DFDFDF'
       }
     }
-  
+
     // add substations as a layer
     var substationLayer = L.geoJSON(layer2, {
       pointToLayer: function(feature, latlng) {
