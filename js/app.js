@@ -42,15 +42,20 @@
   function locationRadius(val) {
 
     var radius = Math.sqrt(val / Math.PI);
-    return radius * 1.5; // adjust the scale
+    return radius * 2.5; // adjust the scale
 
   } // end of locationRadius()
 
   // calculating radius of substation points
   function substationRadius(val) {
+    if (val > 0) {
+      var radius = Math.sqrt(val / Math.PI);
+      return radius;
+    } else {
+      var radius = 3;
+      return radius;
+    }
 
-    var radius = Math.sqrt(val / Math.PI);
-    return radius * 0.8;
 
   } // end of substationRadius()
 
@@ -153,7 +158,7 @@
       if(val > 0) {
         return subPrimColor;
       } else {
-        return '#DFDFDF'
+        return '#a029b2'
       }
     }
 
