@@ -20,3 +20,14 @@
 .flex-child h1, .flex-child h2 {
   color: #7a5596;
 }
+
+#locate {
+  z-index: 700;
+  position: absolute;
+  left: 385px;
+  bottom: 25px;
+  width: 150px;
+  text-align: center;
+  font-size: 1.3em;
+  background-color: #7a5596;
+}

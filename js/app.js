@@ -91,7 +91,7 @@
   } // end of processData()
 
   // function to add tooltips
-  function addTooltips(feature, layer){
+  function addTooltips(feature, layer) {
     var tooltip = "<b>Capacity: " + feature.properties.DISTGENSIZ + " kW</b>";
     layer.bindTooltip(tooltip);
   }
@@ -112,7 +112,7 @@
         return L.circleMarker(latlng, commonOptions);
       },
       filter: function(feature) {
-        if(feature.properties.DISTGENTYP==="Solar" || feature.properties.DISTGENTYP==="Dual-S_W") {
+        if (feature.properties.DISTGENTYP === "Solar" || feature.properties.DISTGENTYP === "Dual-S_W") {
           return feature;
         }
       },
@@ -134,7 +134,7 @@
         return L.circleMarker(latlng, commonOptions);
       },
       filter: function(feature) {
-        if(feature.properties.DISTGENTYP==="BioMass") {
+        if (feature.properties.DISTGENTYP === "BioMass") {
           return feature;
         }
       },
@@ -156,7 +156,7 @@
         return L.circleMarker(latlng, commonOptions);
       },
       filter: function(feature) {
-        if(feature.properties.DISTGENTYP==="Wind") {
+        if (feature.properties.DISTGENTYP === "Wind") {
           return feature;
         }
       },
@@ -174,7 +174,7 @@
 
     function colorSub(val) {
 
-      if(val > 0) {
+      if (val > 0) {
         return subPrimColor;
       } else {
         return subSecColor;
@@ -257,18 +257,18 @@
       // apply filter for only this substation's locations
       for (var i = 0; i < distGenArray.length; i++) {
         distGenArray[i].eachLayer(function(layer1) {
-            if (layer1.feature.properties.SUB === props.FACILITYID) {
-              layer1.setStyle({
-                fillOpacity: .8
-              })
-            } else {
-              layer1.setStyle({
-                fillOpacity: 0,
-                stroke: true,
-                opacity: 1,
-                weight: 0.2
-              })
-            }
+          if (layer1.feature.properties.SUB === props.FACILITYID) {
+            layer1.setStyle({
+              fillOpacity: .8
+            })
+          } else {
+            layer1.setStyle({
+              fillOpacity: 0,
+              stroke: true,
+              opacity: 1,
+              weight: 0.2
+            })
+          }
         })
       }
 
@@ -320,7 +320,7 @@
     legendControl.addTo(map);
 
     // loop through all location features
-    var locationValues = locationData.features.map(function (location) {
+    var locationValues = locationData.features.map(function(location) {
       // for each
       for (var kw in location.properties) {
         return location.properties.DISTGENSIZ;
@@ -340,7 +340,7 @@
       locSmallDiameter = locLargeDiameter / 2;
 
     // loop through all substation features
-    var substationValues = substationData.features.map(function (substation) {
+    var substationValues = substationData.features.map(function(substation) {
       // for each
       for (var kw in substation.properties) {
         return substation.properties.totalGeneration;
@@ -374,7 +374,7 @@
     $(".legend-small-sub").css({
       'width': subSmallDiameter.toFixed(),
       'height': subSmallDiameter.toFixed(),
-      'top': (subLargeDiameter - subSmallDiameter) -2,
+      'top': (subLargeDiameter - subSmallDiameter) - 2,
       'left': (subSmallDiameter / 2) - 2,
       'border-color': subPrimColor,
       'border-width': 2
@@ -422,8 +422,8 @@
     $(".legend-small-loc").css({
       'width': locSmallDiameter.toFixed(),
       'height': locSmallDiameter.toFixed(),
-      'top': (locLargeDiameter - locSmallDiameter) -3,
-      'left': (locSmallDiameter / 2) -2,
+      'top': (locLargeDiameter - locSmallDiameter) - 3,
+      'left': (locSmallDiameter / 2) - 2,
       'border-color': locSolarColor,
       'border-width': 2
     });
@@ -452,5 +452,31 @@
     });
 
   } // end drawLegend()
+
+  var theLocation = {};
+
+  // click locate button, get location
+  $("#locate").on('click', function() {
+    map.locate({
+      setView: true,
+      maxZoom: 19
+    });
+  });
+
+  // update theLocation with marker
+  map.on('locationfound', function(e) {
+    theLocation = L.marker(e.latlng).addTo(map).bindPopup("This is your location").openPopup();
+  });
+
+  // report error if locate failed
+  map.on('locationerror', function() {
+    console.log("Error finding location");
+  });
+
+  // remove location marker with click
+  map.on('click', function() {
+    map.removeLayer(theLocation);
+  });
+
 
 })(); // end app.js
