@@ -10,7 +10,8 @@
   });
 
   // easy to find colors
-  var subPrimColor = '#5067af', //'#b383c4'
+  var subPrimColor = '#5067af',
+    subSecColor = '#919191',
     locSolarColor = '#ff7800',
     locBmColor = '#5cb572',
     locWindColor = '#b383c4';
@@ -158,7 +159,7 @@
       if(val > 0) {
         return subPrimColor;
       } else {
-        return '#a029b2'
+        return subSecColor;
       }
     }
 
@@ -245,7 +246,9 @@
             } else {
               layer1.setStyle({
                 fillOpacity: 0,
-                opacity: 0
+                stroke: true,
+                opacity: 1,
+                weight: 0.2
               })
             }
         })
@@ -266,7 +269,7 @@
         distGenArray[i].eachLayer(function(layer1) {
           layer1.setStyle({
             fillOpacity: .8,
-            opacity: 1
+            stroke: false
           })
         })
       }
