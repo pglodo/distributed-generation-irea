@@ -43,7 +43,7 @@
   function locationRadius(val) {
 
     var radius = Math.sqrt(val / Math.PI);
-    return radius * 2.5; // adjust the scale
+    return radius * 2.7; // adjust the scale
 
   } // end of locationRadius()
 
@@ -51,7 +51,7 @@
   function substationRadius(val) {
     if (val > 0) {
       var radius = Math.sqrt(val / Math.PI);
-      return radius;
+      return radius * 1.4;
     } else {
       var radius = 3;
       return radius;
