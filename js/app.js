@@ -90,6 +90,12 @@
 
   } // end of processData()
 
+  // function to add tooltips
+  function addTooltips(feature, layer){
+    var tooltip = "<b>Capacity: " + feature.properties.DISTGENSIZ + " kW</b>";
+    layer.bindTooltip(tooltip);
+  }
+
 
   // Draw the map
   function drawMap(layer1, layer2) {
@@ -115,6 +121,10 @@
           radius: locationRadius(+feature.properties.DISTGENSIZ),
           color: locSolarColor
         }
+      },
+      onEachFeature: function(feature, layer) {
+        var tooltip = "<b>Capacity:</b> " + feature.properties.DISTGENSIZ + " kW";
+        layer.bindTooltip(tooltip);
       }
     }).addTo(map);
 
@@ -133,6 +143,10 @@
           radius: locationRadius(+feature.properties.DISTGENSIZ),
           color: locBmColor
         }
+      },
+      onEachFeature: function(feature, layer) {
+        var tooltip = "<b>Capacity: " + feature.properties.DISTGENSIZ + " kW</b>";
+        layer.bindTooltip(tooltip);
       }
     }).addTo(map);
 
@@ -151,6 +165,10 @@
           radius: locationRadius(feature.properties.DISTGENSIZ),
           color: locWindColor
         }
+      },
+      onEachFeature: function(feature, layer) {
+        var tooltip = "<b>Capacity: " + feature.properties.DISTGENSIZ + " kW</b>";
+        layer.bindTooltip(tooltip);
       }
     }).addTo(map);
 
