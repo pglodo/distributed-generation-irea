@@ -10,11 +10,11 @@
   });
 
   // easy to find colors
-  var subPrimColor = '#5067af',
+  var subPrimColor = '#7a5596', //#5067af #7a5596
     subSecColor = '#919191',
     locSolarColor = '#ff7800',
     locBmColor = '#5cb572',
-    locWindColor = '#b383c4';
+    locWindColor = '#65cece'; //#b383c4
 
   // add basemap
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -201,7 +201,7 @@
     var layersObject = {
       "<b style='color: #5cb572'>Bio Mass</b>": bmLayer,
       "<b style='color: #ff7800'>Solar</b>": solarLayer,
-      "<b style='color: #b383c4'>Wind</b>": windLayer,
+      "<b style='color: #65cece'>Wind</b>": windLayer,
     };
 
     L.control.layers(null, layersObject, {
