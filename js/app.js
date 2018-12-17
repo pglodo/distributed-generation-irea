@@ -453,6 +453,21 @@
 
   } // end drawLegend()
 
+  // visual affordance on locate button
+  $("#locate").on('mouseover', function() {
+    $("#locate").css({
+      'background-color': '#9d7bb7'
+    });
+  });
+
+  // remove visual affordance
+  $("#locate").on('mouseout', function() {
+    $("#locate").css({
+      'background-color': '#7a5596'
+    });
+  });
+
+  // create empty variable for theLocation
   var theLocation = {};
 
   // click locate button, get location
