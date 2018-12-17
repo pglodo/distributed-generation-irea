@@ -393,13 +393,13 @@
 
     // adjust the postion of the large based on size of circle
     $(".legend-large-sub-label").css({
-      'top': 56,
+      'top': 59,
       'left': subLargeDiameter + 20,
     });
 
     // adjust the position of the small based on size of circle
     $(".legend-small-sub-label").css({
-      'top': 86,
+      'top': 100,
       'left': subLargeDiameter + 20,
     });
 
@@ -442,13 +442,13 @@
     // adjust the postion of the large based on size of circle
     $(".legend-large-loc-label").css({
       'top': 66,
-      'right': locLargeDiameter + 18,
+      'right': locLargeDiameter - 17,
     });
 
     // adjust the position of the small based on size of circle
     $(".legend-small-loc-label").css({
-      'top': 90,
-      'right': locLargeDiameter + 8,
+      'top': 95,
+      'right': locLargeDiameter - 27,
     });
 
   } // end drawLegend()
